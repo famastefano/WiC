@@ -1,0 +1,111 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+
+% Set the geometry early as other packages might depend on it for page/line width etc.
+\usepackage[a4paper]{geometry}
+
+% Force usage of Arial for the entire document
+\usepackage[scale=1.0]{newtxtext}
+
+\usepackage{graphicx}
+
+\usepackage[parfill]{parskip} % Begin paragraphs with an empty line rather than an indent
+
+% Global Packsges
+\usepackage{booktabs} % for much better looking tables
+\usepackage{tabularx}
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage[hidelinks]{hyperref}
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\title{World in Conflicts\\\normalsize{Rev 1.0}}
+\author{Stefano Fam\`a}
+\date{2024.08.25}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\chapter{Preamble}
+\section{Project Description}
+
+\chapter{Player Interaction}
+\section{Camera}
+\begin{itemize}
+\item Bird-Eye View.
+\item User can rotate only along the Z-axis.
+\item User can traslate the camera along all axes.
+\item Blocked by:
+	\begin{itemize}
+	\item Terrain.
+	\item Water.
+	\item Buildings.
+	\item Edges of the map.
+	\item Maximum altitude.
+	\end{itemize}
+\item Any non-blocking entities that collide with the camera will become transparent with a design-modifiable alpha value.
+\end{itemize}
+
+\chapter{AI}
+\section{Unit Controller}
+\begin{enumerate}
+\item Receives input from Player or Mastermind Controller.
+\item Inputs are Actions, that are decoded into smaller tasks.
+\item Outputs are events that are sent to the Player or Mastermind Controller.
+\end{enumerate}
+
+List of outputs:
+
+\begin{tabularx}{\linewidth}{p{3cm} X p{3cm}}
+\toprule
+\textbf{Output} & \textbf{Trigger} & \textbf{Data Sent}\\ \midrule
+Enemy Spotted   & Whenever an enemy that was hidden, appears. & Spotted AActor.\\ \midrule
+Suffered Damage & Got hit by an unkown attacker (like artillery, or hidden enemy). & Self.\\ \midrule
+Got Attacked    & Got hit and I know who is. & Attacker AActor.\\ \midrule
+Less Than \% HP & Design-configurable list of percentages that when the
+                  HP is below that, will send the event.
+                  In case of multiple thresholds being triggered in the same frame,
+                  only the smallest will be sent. & Self.\\ \midrule
+Dead            & When the unit dies.             & Self and Killer AActor (if present).\\ \midrule
+Killed Enemy    & When this unit kills another one. & Self and Killed AActor.\\
+\bottomrule
+\end{tabularx}
+
+\section{Mastermind Controller}
+\begin{enumerate}
+\item Long/Mid/Short-term Plans.
+\item Real Military Strategies.
+\item Decisions go from Top to Bottom, while Reactions go from Bottom to Top.
+\item Recieves inputs from Unit Controller's Outputs.
+\item Long-term Plans:
+	\begin{enumerate}
+	\item Win the battle
+	\item Defend Allies
+	\item Support Allies
+	\end{enumerate}
+\item Mid-term Plans:
+	\begin{enumerate}
+	\item Define goals that are required to accomplish the Long-term ones
+	\item Capture Control points, defend them, stall enemy, reinforce ally, transport troops etc.
+	\end{enumerate}
+\item Short-term Plans:
+	\begin{enumerate}
+	\item Define goals that are required to accomplish the Short-term ones, and make the AI more reactive and life-like.
+	\item Those are the only ones that are actual Actions sent to the various Unit Controllers.
+	\end{enumerate}
+\end{enumerate}
+
+\end{document}
